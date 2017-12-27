@@ -1,0 +1,88 @@
+---
+- name: Add php repository
+  apt_repository:
+    repo: "{{ _php_repository }}"
+
+- name: Install packages
+  apt:
+    name: "{{ item }}"
+  with_items: "{{ _php_packages }}"
+
+- name: Get php version
+  shell: php {{ role_path }}/files/version.php
+  register: _output
+  changed_when: false
+
+- name: Register var with php version
+  set_fact:
+    _php_version: "{{ _output.stdout }}"
+
+- name: Install additional development packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items: "{{ _php_packages_dev }}"
+  when: php_env == 'dev'
+
+- name: Install xdebug
+  apt:
+    name: php-xdebug
+    state: latest
+  when: php_env == 'dev'
+  notify: restart-apache
+
+- name: Enable xdebug
+  shell: phpenmod xdebug
+  register: _output
+  changed_when: "'Enabling module xdebug' in _output.stdout"
+  when: php_env == 'dev'
+  notify: restart-apache
+
+- name: Update xdebug config file
+  blockinfile:
+    path: /etc/php/{{ _php_version }}/mods-available/xdebug.ini
+    insertafter: EOF
+    block: |
+      xdebug.remote_enable=1
+      xdebug.remote_connect_back=1
+  when: php_env == 'dev'
+  notify: restart-apache
+
+- name: Check if composer is installed
+  stat:
+    path: /usr/local/bin/composer
+  register: _php_composer_info
+
+- name: Download composer installer
+  get_url:
+    url: "{{ _php_composer_download_url }}"
+    dest: /opt/composer-installer.php
+  when: not _php_composer_info.stat.exists
+
+- name: Install composer
+  shell: php /opt/composer-installer.php --install-dir="/usr/local/bin" --filename="composer"
+  register: _output
+  when: not _php_composer_info.stat.exists
+
+- name: Delete composer installer
+  file:
+    path: /opt/composer-installer.php
+    state: absent
+  when: not _php_composer_info.stat.exists
+
+- name: Check if phpunit is installed
+  stat:
+    path: /usr/local/bin/phpunit
+  register: _php_phpunit_info
+
+- name: Download phpunit
+  get_url:
+    url: "{{ _php_phpunit_download_url }}"
+    dest: /usr/local/bin/phpunit
+  when: not _php_phpunit_info.stat.exists
+
+- name: Set permissions for phpunit
+  file:
+    path: /usr/local/bin/phpunit
+    mode: 0755
+  when: not _php_phpunit_info.stat.exists

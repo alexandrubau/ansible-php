@@ -1,0 +1,17 @@
+---
+_php_packages:
+  - php{{ php_version }}
+  - php-gd
+  - php-curl
+  - php-mysql
+  - php-mcrypt
+  - php-mbstring
+  - php-sqlite3
+  - php-zip
+  - libapache2-mod-php
+_php_packages_dev:
+  - php-dev
+  - php-pear
+_php_repository: ppa:ondrej/php
+_php_composer_download_url: https://getcomposer.org/installer
+_php_phpunit_download_url: https://phar.phpunit.de/phpunit-6.4.phar
