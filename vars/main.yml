@@ -1,4 +1,5 @@
 ---
+_php_role: ~
 _php_packages:
   - php{{ php_version }}
   - php-gd

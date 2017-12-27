@@ -29,14 +29,14 @@
     name: php-xdebug
     state: latest
   when: php_env == 'dev'
-  notify: restart-apache
+  notify: restart-webserver
 
 - name: Enable xdebug
   shell: phpenmod xdebug
   register: _output
   changed_when: "'Enabling module xdebug' in _output.stdout"
   when: php_env == 'dev'
-  notify: restart-apache
+  notify: restart-webserver
 
 - name: Update xdebug config file
   blockinfile:
@@ -46,7 +46,7 @@
       xdebug.remote_enable=1
       xdebug.remote_connect_back=1
   when: php_env == 'dev'
-  notify: restart-apache
+  notify: restart-webserver
 
 - name: Check if composer is installed
   stat:
