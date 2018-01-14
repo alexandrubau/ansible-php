@@ -2,16 +2,16 @@
 _php_role: ~
 _php_packages:
   - php{{ php_version }}
-  - php-gd
-  - php-curl
-  - php-mysql
-  - php-mcrypt
-  - php-mbstring
-  - php-sqlite3
-  - php-zip
-  - libapache2-mod-php
+  - php{{ php_version }}-gd
+  - php{{ php_version }}-curl
+  - php{{ php_version }}-mysql
+  - php{{ php_version }}-mcrypt
+  - php{{ php_version }}-mbstring
+  - php{{ php_version }}-sqlite3
+  - php{{ php_version }}-zip
+  - libapache2-mod-php{{ php_version }}
 _php_packages_dev:
-  - php-dev
+  - php{{ php_version }}-dev
   - php-pear
 _php_repository: ppa:ondrej/php
 _php_composer_download_url: https://getcomposer.org/installer
