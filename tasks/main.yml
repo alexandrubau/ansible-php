@@ -17,16 +17,9 @@
   set_fact:
     _php_version: "{{ _output.stdout }}"
 
-- name: Install additional development packages
-  apt:
-    name: "{{ item }}"
-    state: latest
-  with_items: "{{ _php_packages_dev }}"
-  when: php_env == 'dev'
-
 - name: Install xdebug
   apt:
-    name: php-xdebug
+    name: php{{ php_version }}-xdebug
     state: latest
   when: php_env == 'dev'
   notify: restart-webserver
