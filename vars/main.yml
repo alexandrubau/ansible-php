@@ -5,7 +5,6 @@ _php_packages:
   - php{{ php_version }}-curl
   - php{{ php_version }}-gd
   - php{{ php_version }}-mbstring
-  - php{{ php_version }}-mcrypt
   - php{{ php_version }}-mysql
   - php{{ php_version }}-sqlite3
   - php{{ php_version }}-xml
