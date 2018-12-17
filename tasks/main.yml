@@ -47,17 +47,16 @@
 - name: Download composer installer
   get_url:
     url: "{{ _php_composer_download_url }}"
-    dest: /opt/composer-installer.php
+    dest: /tmp/composer-installer.php
   when: not _php_composer_info.stat.exists
 
 - name: Install composer
-  shell: php /opt/composer-installer.php --install-dir="/usr/local/bin" --filename="composer"
-  register: _output
+  shell: php /tmp/composer-installer.php --install-dir="/usr/local/bin" --filename="composer"
   when: not _php_composer_info.stat.exists
 
 - name: Delete composer installer
   file:
-    path: /opt/composer-installer.php
+    path: /tmp/composer-installer.php
     state: absent
   when: not _php_composer_info.stat.exists
 
