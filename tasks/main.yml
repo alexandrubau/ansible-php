@@ -5,8 +5,7 @@
 
 - name: Install packages
   apt:
-    name: "{{ item }}"
-  with_items: "{{ _php_packages }}"
+    name: "{{ _php_packages }}"
 
 - name: Get php version
   shell: php {{ role_path }}/files/version.php
@@ -20,7 +19,6 @@
 - name: Install xdebug
   apt:
     name: php{{ php_version }}-xdebug
-    state: latest
   when: php_env == 'dev'
   notify: restart-webserver
 
