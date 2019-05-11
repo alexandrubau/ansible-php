@@ -7,14 +7,10 @@
   apt:
     name: "{{ _php_packages }}"
 
-- name: Get php version
-  shell: php {{ role_path }}/files/version.php
-  register: _output
-  changed_when: false
-
-- name: Register var with php version
-  set_fact:
-    _php_version: "{{ _output.stdout }}"
+- name: Install apache packages
+  apt:
+    name: "{{ _php_apache_packages }}"
+  when: _apache_role is defined
 
 - name: Install xdebug
   apt:
@@ -31,7 +27,7 @@
 
 - name: Update xdebug config file
   blockinfile:
-    path: /etc/php/{{ _php_version }}/mods-available/xdebug.ini
+    path: /etc/php/{{ php_version }}/mods-available/xdebug.ini
     insertafter: EOF
     block: |
       xdebug.remote_enable=1
