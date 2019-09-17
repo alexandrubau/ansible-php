@@ -7,6 +7,11 @@
   apt:
     name: "{{ _php_packages }}"
 
+- name: Install fpm packages
+  apt:
+    name: "{{ _php_fpm_packages }}"
+  when: php_fpm == true
+
 - name: Install apache packages
   apt:
     name: "{{ _php_apache_packages }}"
