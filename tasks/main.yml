@@ -12,6 +12,10 @@
     name: "{{ _php_fpm_packages }}"
   when: php_fpm == true
 
+- name: Install extension packages
+  apt:
+    name: "{{ _php_ext_packages }}"
+
 - name: Install apache packages
   apt:
     name: "{{ _php_apache_packages }}"
