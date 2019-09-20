@@ -21,6 +21,65 @@
     name: "{{ _php_apache_packages }}"
   when: _apache_role is defined
 
+- name: Configure cli ini file
+  ini_file:
+    path: /etc/php/{{ php_version }}/cli/php.ini
+    section: "{{ item.section | default('PHP') }}"
+    option: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: "{{ 'absent' if item.remove is defined and item.remove == true else 'present' }}"
+  with_items: "{{ php_cli_ini }}"
+
+- name: Configure apache ini file
+  ini_file:
+    path: /etc/php/{{ php_version }}/apache2/php.ini
+    section: "{{ item.section | default('PHP') }}"
+    option: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: "{{ 'absent' if item.remove is defined and item.remove == true else 'present' }}"
+  with_items: "{{ php_apache_ini }}"
+  when: _apache_role is defined
+
+- name: Configure fpm ini file
+  ini_file:
+    path: /etc/php/{{ php_version }}/fpm/php.ini
+    section: "{{ item.section | default('PHP') }}"
+    option: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: "{{ 'absent' if item.remove is defined and item.remove == true else 'present' }}"
+  with_items: "{{ php_fpm_ini }}"
+  when: php_fpm == true
+
+- name: Configure fpm service ini file
+  ini_file:
+    path: /etc/php/{{ php_version }}/fpm/php-fpm.ini
+    section: "{{ item.section | default('global') }}"
+    option: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: "{{ 'absent' if item.remove is defined and item.remove == true else 'present' }}"
+  with_items: "{{ php_fpm_service_ini }}"
+  when: php_fpm == true
+
+- name: Ensure fpm pool config files exist
+  copy:
+    src: /etc/php/{{ php_version }}/fpm/pool.d/www.conf
+    dest: /etc/php/{{ php_version }}/fpm/pool.d/{{ item.name }}.conf
+    remote_src: yes
+  with_items: "{{ php_fpm_pools }}"
+  when: php_fpm == true
+
+- name: Configure fpm pool file
+  ini_file:
+    path: /etc/php/{{ php_version }}/fpm/pool.d/{{ item[0].name }}.conf
+    section: "{{ item.section | default(item[0].name) }}"
+    option: "{{ item[1].name }}"
+    value: "{{ item[1].value }}"
+    state: "{{ 'absent' if item[1].remove is defined and item[1].remove == true else 'present' }}"
+  with_subelements: 
+    - "{{ php_fpm_pools }}"
+    - conf
+  when: php_fpm == true
+
 - name: Install xdebug
   apt:
     name: php{{ php_version }}-xdebug
