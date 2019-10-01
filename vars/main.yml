@@ -1,5 +1,6 @@
 ---
 _php_role: ~
+_php_service: php{{ php_version }}-fpm
 _php_packages:
   - php{{ php_version }}-common
   - php{{ php_version }}-cli

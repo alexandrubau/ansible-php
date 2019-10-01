@@ -1,0 +1,6 @@
+- name: Restart php-fpm
+  service:
+    name: "{{ _php_service }}"
+    state: restarted
+  listen: restart-phpfpm
+  when: php_fpm == true

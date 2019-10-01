@@ -49,6 +49,7 @@
     state: "{{ 'absent' if item.remove is defined and item.remove == true else 'present' }}"
   with_items: "{{ php_fpm_ini }}"
   when: php_fpm == true
+  notify: restart-phpfpm
 
 - name: Configure fpm service ini file
   ini_file:
@@ -59,6 +60,7 @@
     state: "{{ 'absent' if item.remove is defined and item.remove == true else 'present' }}"
   with_items: "{{ php_fpm_service_ini }}"
   when: php_fpm == true
+  notify: restart-phpfpm
 
 - name: Ensure fpm pool config files exist
   copy:
@@ -67,6 +69,7 @@
     remote_src: yes
   with_items: "{{ php_fpm_pools }}"
   when: php_fpm == true
+  notify: restart-phpfpm
 
 - name: Configure fpm pool file
   ini_file:
@@ -79,19 +82,18 @@
     - "{{ php_fpm_pools }}"
     - conf
   when: php_fpm == true
+  notify: restart-phpfpm
 
 - name: Install xdebug
   apt:
     name: php{{ php_version }}-xdebug
   when: php_env == 'dev'
-  notify: restart-webserver
 
 - name: Enable xdebug
   shell: phpenmod xdebug
   register: _output
   changed_when: "'Enabling module xdebug' in _output.stdout"
   when: php_env == 'dev'
-  notify: restart-webserver
 
 - name: Update xdebug config file
   blockinfile:
@@ -101,7 +103,9 @@
       xdebug.remote_enable=1
       xdebug.remote_connect_back=1
   when: php_env == 'dev'
-  notify: restart-webserver
+  notify: 
+    - restart-webserver
+    - restart-phpfpm
 
 - name: Check if composer is installed
   stat:
