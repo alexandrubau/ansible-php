@@ -37,8 +37,8 @@
     option: "{{ item.name }}"
     value: "{{ item.value }}"
     state: "{{ 'absent' if item.remove is defined and item.remove == true else 'present' }}"
-  when: _apache_role is defined
   with_items: "{{ php_apache_ini }}"
+  when: _apache_role is defined
 
 - name: Configure fpm ini file
   ini_file:
@@ -47,8 +47,8 @@
     option: "{{ item.name }}"
     value: "{{ item.value }}"
     state: "{{ 'absent' if item.remove is defined and item.remove == true else 'present' }}"
-  when: php_fpm == true
   with_items: "{{ php_fpm_ini }}"
+  when: php_fpm == true
   notify: restart-phpfpm
 
 - name: Configure fpm service ini file
@@ -58,8 +58,8 @@
     option: "{{ item.name }}"
     value: "{{ item.value }}"
     state: "{{ 'absent' if item.remove is defined and item.remove == true else 'present' }}"
-  when: php_fpm == true
   with_items: "{{ php_fpm_service_ini }}"
+  when: php_fpm == true
   notify: restart-phpfpm
 
 - name: Ensure fpm pool config files exist
@@ -67,8 +67,8 @@
     src: /etc/php/{{ php_version }}/fpm/pool.d/www.conf
     dest: /etc/php/{{ php_version }}/fpm/pool.d/{{ item.name }}.conf
     remote_src: yes
-  when: php_fpm == true
   with_items: "{{ php_fpm_pools }}"
+  when: php_fpm == true
   notify: restart-phpfpm
 
 - name: Configure fpm pool file
@@ -78,10 +78,10 @@
     option: "{{ item[1].name }}"
     value: "{{ item[1].value }}"
     state: "{{ 'absent' if item[1].remove is defined and item[1].remove == true else 'present' }}"
-  when: php_fpm == true
   with_subelements: 
     - "{{ php_fpm_pools }}"
     - conf
+  when: php_fpm == true
   notify: restart-phpfpm
 
 - name: Install xdebug
