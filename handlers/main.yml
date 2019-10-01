@@ -4,3 +4,17 @@
     state: restarted
   listen: restart-phpfpm
   when: php_fpm == true
+
+- name: Restart apache
+  service:
+    name: "{{ _apache_service }}"
+    state: restarted
+  listen: restart-webserver
+  when: _apache_role is defined
+
+- name: Restart nginx
+  service:
+    name: "{{ _nginx_service }}"
+    state: restarted
+  listen: restart-webserver
+  when: _nginx_role is defined
