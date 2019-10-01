@@ -144,3 +144,10 @@
     path: /usr/local/bin/phpunit
     mode: 0755
   when: not _php_phpunit_info.stat.exists
+
+- name: Start service
+  service:
+    name: "{{ _php_service }}"
+    state: started
+    enabled: yes
+  when: php_fpm == true
