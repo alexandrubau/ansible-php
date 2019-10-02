@@ -87,13 +87,13 @@
 - name: Install xdebug
   apt:
     name: php{{ php_version }}-xdebug
-  when: php_env == 'dev'
+  when: php_env != 'prod'
 
 - name: Enable xdebug
   shell: phpenmod xdebug
   register: _output
   changed_when: "'Enabling module xdebug' in _output.stdout"
-  when: php_env == 'dev'
+  when: php_env != 'prod'
 
 - name: Update xdebug config file
   blockinfile:
@@ -102,7 +102,7 @@
     block: |
       xdebug.remote_enable=1
       xdebug.remote_connect_back=1
-  when: php_env == 'dev'
+  when: php_env != 'prod'
   notify: 
     - restart-webserver
     - restart-phpfpm
