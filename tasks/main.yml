@@ -71,7 +71,7 @@
   when: php_fpm == true
   notify: restart-phpfpm
 
-- name: Configure fpm pool file
+- name: Configure fpm pool files
   ini_file:
     path: /etc/php/{{ php_version }}/fpm/pool.d/{{ item[0].name }}.conf
     section: "{{ item.section | default(item[0].name) }}"
