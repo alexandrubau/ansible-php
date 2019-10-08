@@ -2,6 +2,7 @@
 _php_role: ~
 _php_service: php{{ php_version }}-fpm
 _php_packages:
+  - git # required for composer
   - unzip # recommended for composer
   - php{{ php_version }}-common
   - php{{ php_version }}-cli
