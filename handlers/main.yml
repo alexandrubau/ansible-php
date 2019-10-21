@@ -3,7 +3,7 @@
     name: "{{ _php_service }}"
     state: restarted
   listen: restart-phpfpm
-  when: php_fpm == true
+  when: php_fpm
 
 - name: Restart apache
   service:
